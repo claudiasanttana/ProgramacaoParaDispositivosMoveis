@@ -1,0 +1,140 @@
+MainActivity.kt
+
+package com.example.calculoaposentadoria
+
+import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Spinner
+import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContentView(R.layout.activity_main)
+
+        val spinSexo = findViewById<Spinner>(R.id.spinSexo)
+        val txtIdade = findViewById<EditText>(R.id.txtIdade)
+        val btnCalcular = findViewById<Button>(R.id.btn_Calcular)
+        val txtResultado = findViewById<TextView>(R.id.txt_Resultado)
+
+        spinSexo.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            listOf("Masculino", "Feminino")
+        )
+
+        btnCalcular.setOnClickListener {
+            val idadeInput = txtIdade.text.toString()
+
+            // Validação para idade vazia
+            if (idadeInput.isEmpty()) {
+                txtResultado.text = "Por favor, insira a sua idade."
+                return@setOnClickListener
+            }
+
+            val idade = idadeInput.toIntOrNull()
+
+            // Validação para idade inválida
+            if (idade == null || idade < 0) {
+                txtResultado.text = "Por favor, insira uma idade válida e maior que 0."
+                return@setOnClickListener
+            }
+
+            val sexo = spinSexo.selectedItem as String
+            val resultado = if (sexo == "Masculino") {
+                65 - idade
+            } else {
+                62 - idade
+            }
+
+            // Saída
+            txtResultado.text = if (resultado > 0) {
+                "Faltam $resultado anos para você se aposentar!"
+            } else {
+                "Você já pode se aposentar!"
+            }
+        }
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+    }
+}
+
+ Activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FA8072"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal"
+        android:text="Calcule quanto tempo falta para sua aposentadoria!"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Escolha o sexo"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <Spinner
+        android:id="@+id/spinSexo"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Digite sua idade!"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold" />
+
+
+    <EditText
+        android:id="@+id/txtIdade"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Digite sua Idade!"
+        android:minHeight="48dp" />
+
+
+    <Button
+        android:id="@+id/btn_Calcular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calcular" />
+
+    <TextView
+        android:id="@+id/txt_Resultado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF" />
+
+</LinearLayout>
